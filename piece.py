@@ -482,15 +482,24 @@ class Pawn(Piece):
         board[row_dest][col_dest].piece = None
             
     def is_single_space_forward_move(self, row_src, col_src, row_dest, col_dest):
-        direction = -1 if self.color == "white" else 1
+        if self.perspective == "white":
+            direction = -1 if self.color == "white" else 1
+        else:
+            direction = 1 if self.color == "white" else -1
         return row_dest == row_src + direction and col_dest == col_src
             
     def is_double_space_forward_move(self, row_src, col_src, row_dest, col_dest):
-        direction = -2 if self.color == "white" else 2
+        if self.perspective == "white":
+            direction = -2 if self.color == "white" else 2
+        else:
+            direction = 2 if self.color == "white" else -2
         return row_dest == row_src + direction and col_dest == col_src
             
     def is_diagonal_move(self, row_src, col_src, row_dest, col_dest):
-        direction = -1 if self.color == "white" else 1
+        if self.perspective == "white":
+            direction = -1 if self.color == "white" else 1
+        else:
+            direction = 1 if self.color == "white" else -1
         return row_dest == row_src + direction and abs(col_dest - col_src) == 1
         
     def can_en_passant_capture(self, board, row_dest, col_dest):
@@ -500,10 +509,16 @@ class Pawn(Piece):
         return target_square.piece and target_square.piece.type == "pawn" and target_square.piece.en_passant_capture.can_be_captured
     
     def get_en_passant_direction(self):
-        return 1 if self.color == "white" else -1
+        if self.perspective == "white":
+            return 1 if self.color == "white" else -1
+        else:
+            return -1 if self.color == "white" else 1
     
     def is_clear_path(self, board, row_src, col_src, row_dest):
-        direction = -1 if self.color == "white" else 1
+        if self.perspective == "white":
+            direction = -1 if self.color == "white" else 1
+        else:
+            direction = 1 if self.color == "white" else -1
         distance = abs(row_dest - row_src)
         for i in range(1, distance):
             current_row = row_src + (i * direction)
