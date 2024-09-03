@@ -41,11 +41,11 @@ class Board(ChessAttributes):
             for i in range(self.BOARD_SIZE):
                 NewPiece = white_starting_order[i]
                 if NewPiece == King:
-                    self._board[first_rank][i].piece = NewPiece("white", self.perspective, (first_rank, i), self.black_player.pieces)
+                    self._board[first_rank][i].piece = NewPiece("white", self.perspective, (first_rank, i), self.white_player.pieces, self.black_player.pieces)
                 else:
-                    self._board[first_rank][i].piece = NewPiece("white", self.perspective, (first_rank, i))
+                    self._board[first_rank][i].piece = NewPiece("white", self.perspective, (first_rank, i), self.white_player.pieces)
                 self.white_player.pieces.append(self._board[first_rank][i].piece)
-                self._board[second_rank][i].piece = Pawn("white", self.perspective, (second_rank, i))
+                self._board[second_rank][i].piece = Pawn("white", self.perspective, (second_rank, i), self.white_player.pieces)
                 self.white_player.pieces.append(self._board[second_rank][i].piece)
             # Create black pieces
             first_rank = self.BOARD_SIZE - 8
@@ -53,11 +53,11 @@ class Board(ChessAttributes):
             for i in range(self.BOARD_SIZE):
                 NewPiece = white_starting_order[i]
                 if NewPiece == King:
-                    self._board[first_rank][i].piece = NewPiece("black", self.perspective, (first_rank, i), self.white_player.pieces)
+                    self._board[first_rank][i].piece = NewPiece("black", self.perspective, (first_rank, i), self.black_player.pieces, self.white_player.pieces)
                 else:
-                    self._board[first_rank][i].piece = NewPiece("black", self.perspective, (first_rank, i))
+                    self._board[first_rank][i].piece = NewPiece("black", self.perspective, (first_rank, i), self.black_player.pieces)
                 self.black_player.pieces.append(self._board[first_rank][i].piece)
-                self._board[second_rank][i].piece = Pawn("black", self.perspective, (second_rank, i))
+                self._board[second_rank][i].piece = Pawn("black", self.perspective, (second_rank, i), self.black_player.pieces)
                 self.black_player.pieces.append(self._board[second_rank][i].piece)
         else:
             black_starting_order = white_starting_order[::-1]
@@ -67,11 +67,11 @@ class Board(ChessAttributes):
             for i in range(self.BOARD_SIZE):
                 NewPiece = black_starting_order[i]
                 if NewPiece == King:
-                    self._board[first_rank][i].piece = NewPiece("black", self.perspective, (first_rank, i), self.white_player.pieces)
+                    self._board[first_rank][i].piece = NewPiece("black", self.perspective, (first_rank, i), self.black_player.pieces, self.white_player.pieces)
                 else:
-                    self._board[first_rank][i].piece = NewPiece("black", self.perspective, (first_rank, i))
+                    self._board[first_rank][i].piece = NewPiece("black", self.perspective, (first_rank, i), self.black_player.pieces)
                 self.black_player.pieces.append(self._board[first_rank][i].piece)
-                self._board[second_rank][i].piece = Pawn("black", self.perspective, (second_rank, i))
+                self._board[second_rank][i].piece = Pawn("black", self.perspective, (second_rank, i), self.black_player.pieces)
                 self.black_player.pieces.append(self._board[second_rank][i].piece)
             # Create white pieces
             first_rank = self.BOARD_SIZE - 8
@@ -79,9 +79,9 @@ class Board(ChessAttributes):
             for i in range(self.BOARD_SIZE):
                 NewPiece = black_starting_order[i]
                 if NewPiece == King:
-                    self._board[first_rank][i].piece = NewPiece("white", self.perspective, (first_rank, i), self.black_player.pieces)
+                    self._board[first_rank][i].piece = NewPiece("white", self.perspective, (first_rank, i), self.white_player.pieces, self.black_player.pieces)
                 else:
-                    self._board[first_rank][i].piece = NewPiece("white", self.perspective, (first_rank, i))
+                    self._board[first_rank][i].piece = NewPiece("white", self.perspective, (first_rank, i), self.white_player.pieces)
                 self.white_player.pieces.append(self._board[first_rank][i].piece)
-                self._board[second_rank][i].piece = Pawn("white", self.perspective, (second_rank, i))
+                self._board[second_rank][i].piece = Pawn("white", self.perspective, (second_rank, i), self.white_player.pieces)
                 self.white_player.pieces.append(self._board[second_rank][i].piece)

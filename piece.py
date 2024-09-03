@@ -3,12 +3,13 @@ from dataclasses import dataclass
 from chess_attributes import ChessAttributes
 
 class Piece(ChessAttributes):
-    def __init__(self, color, perspective, coordinates):
+    def __init__(self, color, perspective, coordinates, pieces):
         super().__init__()
         self.color = color
         self.perspective = perspective
         self.coordinates = coordinates
         self.position = self.get_pos_from_coords(coordinates, self.perspective)
+        self.pieces = pieces
 
     def move_piece(self, board, row_src, col_src, row_dest, col_dest):
         source_square = self.get_square(board, row_src, col_src)
@@ -77,11 +78,15 @@ class Piece(ChessAttributes):
     
     def is_within_bounds(self, row_dest, col_dest):
         return 0 <= row_dest < self.BOARD_SIZE and 0 <= col_dest < self.BOARD_SIZE
-
+    
+    def is_king_safe(self, board):
+        for piece in self.pieces:
+            if isinstance(piece, King):
+                return not piece.is_in_check(board)
     
 class King(Piece):
-    def __init__(self, color, perspective, coordinates, opponent_pieces):
-        super().__init__(color, perspective, coordinates)
+    def __init__(self, color, perspective, coordinates, pieces, opponent_pieces):
+        super().__init__(color, perspective, coordinates, pieces)
         self.type = "king"
         self.character = "♔" if self.color == "white" else "♚"
         self.opponent_pieces = opponent_pieces
@@ -153,7 +158,7 @@ class King(Piece):
             
     def is_valid_castling_move(self, board, row_src, col_src, row_dest, col_dest):
         if self.is_friendly_rook(board, row_src, col_src, row_dest, col_dest) and self.has_not_moved_rook(board, row_dest, col_dest):
-            if not self.is_in_check(board, row_src, col_src) and self.has_not_moved_king():
+            if not self.is_in_check(board) and self.has_not_moved_king():
                 if self.is_clear_path(board, row_src, col_src, col_dest) and self.are_safe_intermediate_squares(board, row_src, col_src, row_dest, col_dest):
                     return True
         return False
@@ -191,13 +196,14 @@ class King(Piece):
     
     def is_safe_square(self, board, row_src, col_src, row_dest, col_dest):
         captured_piece = self.test_move_piece(board, row_dest, col_dest)
-        if self.is_in_check(board, row_dest, col_dest):
+        if self.is_in_check(board):
             self.reset_move(board, row_src, col_src, captured_piece)
             return False
         self.reset_move(board, row_src, col_src, captured_piece)
         return True
     
-    def is_in_check(self, board, row, col):
+    def is_in_check(self, board):
+        row, col = self.coordinates
         for piece in self.opponent_pieces:
             opponent_row, opponent_col = piece.coordinates
             if piece.can_attack_position(board, opponent_row, opponent_col, row, col):
@@ -205,8 +211,8 @@ class King(Piece):
         return False
 
 class Queen(Piece):
-    def __init__(self, color, perspective, coordinates):
-        super().__init__(color, perspective, coordinates)
+    def __init__(self, color, perspective, coordinates, pieces):
+        super().__init__(color, perspective, coordinates, pieces)
         self.type = "queen"
         self.character = "♕" if self.color == "white" else "♛"
 
@@ -273,8 +279,8 @@ class Queen(Piece):
         return True
     
 class Bishop(Piece):
-    def __init__(self, color, perspective, coordinates):
-        super().__init__(color, perspective, coordinates)
+    def __init__(self, color, perspective, coordinates, pieces):
+        super().__init__(color, perspective, coordinates, pieces)
         self.type = "bishop"
         self.character = "♗" if self.color == "white" else "♝"
 
@@ -311,8 +317,8 @@ class Bishop(Piece):
         return True
     
 class Rook(Piece):
-    def __init__(self, color, perspective, coordinates):
-        super().__init__(color, perspective, coordinates)
+    def __init__(self, color, perspective, coordinates, pieces):
+        super().__init__(color, perspective, coordinates, pieces)
         self.type = "rook"
         self.character = "♖" if self.color == "white" else "♜"
         self.has_moved = False
@@ -367,8 +373,8 @@ class Rook(Piece):
         return True
     
 class Knight(Piece):
-    def __init__(self, color, perspective, coordinates):
-        super().__init__(color, perspective, coordinates)
+    def __init__(self, color, perspective, coordinates, pieces):
+        super().__init__(color, perspective, coordinates, pieces)
         self.type = "knight"
         self.character = "♘" if self.color == "white" else "♞"
 
@@ -403,8 +409,8 @@ class Pawn(Piece):
         can_be_captured: bool
         num_turns_true: int
 
-    def __init__(self, color, perspective, coordinates):
-        super().__init__(color, perspective, coordinates)
+    def __init__(self, color, perspective, coordinates, pieces):
+        super().__init__(color, perspective, coordinates, pieces)
         self.type = "pawn"
         self.character = "♙" if self.color == "white" else "♟"
         self.en_passant_capture = self.EnPassant(False, 0)
